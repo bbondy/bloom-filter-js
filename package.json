@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "test": "jest --verbose",
+    "build": "babel --modules umd src --out-dir dist  --source-maps --ignore src/__test__",
     "lint": "eslint src/*.js"
   },
   "jest": {
