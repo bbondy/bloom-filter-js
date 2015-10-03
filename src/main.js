@@ -1,6 +1,16 @@
 import {toCharCodeArray, simpleHashFn, isBitSet, setBit} from './util.js';
 
 export default class BloomFilter {
+  /**
+   * Constructs a new BloomFilter instance.
+   * If you'd like to initialize with a specific size just call BloomFilter.from(Array.from(Uint8Array(size).values()))
+   *
+   * @param bitsPerElement Used along with estimatedNumberOfElements to figure out the size of the BloomFilter
+   *   By using 10 bits per element you'll have roughly 1% chance of false positives.
+   * @param estimatedNumberOfElements Used along with bitsPerElementto figure out the size of the BloomFilter
+   * @param hashFns An array of hash functions to use
+   *
+   */
   constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns) {
     if (bitsPerElement.constructor === Array) {
       // Re-order params
