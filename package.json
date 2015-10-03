@@ -4,7 +4,12 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "testFileExtensions": ["js"],
+    "moduleFileExtensions": ["js"]
   },
   "repository": {
     "type": "git",
@@ -15,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/bbondy/bloom-filter-js/issues"
   },
-  "homepage": "https://github.com/bbondy/bloom-filter-js#readme"
+  "homepage": "https://github.com/bbondy/bloom-filter-js#readme",
+  "dependencies": {
+    "babel-jest": "^5.3.0",
+    "jest-cli": "^0.5.8"
+  }
 }
