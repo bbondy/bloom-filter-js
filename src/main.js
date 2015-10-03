@@ -4,6 +4,7 @@ export default class BloomFilter {
   /**
    * Constructs a new BloomFilter instance.
    * If you'd like to initialize with a specific size just call BloomFilter.from(Array.from(Uint8Array(size).values()))
+   * Note that there is purposely no remove call because adding that would introduce false negatives.
    *
    * @param bitsPerElement Used along with estimatedNumberOfElements to figure out the size of the BloomFilter
    *   By using 10 bits per element you'll have roughly 1% chance of false positives.
@@ -67,8 +68,12 @@ export default class BloomFilter {
   /**
    * Adds he specified string to the set
    */
-  add(str) {
-    this.getLocationsForCharCodes(toCharCodeArray(str)).forEach(this.setBit);
+  add(data) {
+    if (data.constructor !== Array) {
+      data = toCharCodeArray(data);
+    }
+
+    this.getLocationsForCharCodes(data).forEach(this.setBit);
   }
 
   /**

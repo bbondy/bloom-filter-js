@@ -70,13 +70,20 @@ describe('BloomFilter', function() {
  });
 
  it('supports charcodes being passed in directly to exists', function() {
-  let b = new BloomFilter();
-  b.add('hello');
-  b.add('world');
-  let b2 = BloomFilter.from(b.toJSON());
-  expect(b.exists(toCharCodeArray('hello'))).toBe(true);
-  expect(b.exists(toCharCodeArray('small'))).toBe(false);
-  expect(b.exists(toCharCodeArray('world'))).toBe(true);
-});
+   let b = new BloomFilter();
+   b.add('hello');
+   b.add('world');
+   expect(b.exists(toCharCodeArray('hello'))).toBe(true);
+   expect(b.exists(toCharCodeArray('small'))).toBe(false);
+   expect(b.exists(toCharCodeArray('world'))).toBe(true);
+ });
 
+ it('supports charcodes being passed in directly to add', function() {
+   let b = new BloomFilter();
+   b.add(toCharCodeArray('hello'));
+   b.add('world');
+   expect(b.exists('hello')).toBe(true);
+   expect(b.exists(toCharCodeArray('small'))).toBe(false);
+   expect(b.exists(toCharCodeArray('world'))).toBe(true);
+ });
 });
