@@ -1,4 +1,4 @@
-import {toCharCodeArray, simpleHashFn} from './util.js';
+import {toCharCodeArray, simpleHashFn, isBitSet, setBit} from './util.js';
 
 export default class BloomFilter {
   constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns=[simpleHashFn(101), simpleHashFn(103), simpleHashFn(107)]) {
@@ -7,8 +7,8 @@ export default class BloomFilter {
     this.bufferByteSize = Math.ceil(this.bufferBitSize / 8);
     this.buffer = new Uint8Array(this.bufferByteSize);
     this.hashFns = hashFns;
-    this.setBit = this.setBit.bind(this);
-    this.isBitSet = this.isBitSet.bind(this);
+    this.setBit = setBit.bind(this, this.buffer);
+    this.isBitSet = isBitSet.bind(this, this.buffer);
   }
 
   /**
@@ -24,7 +24,7 @@ export default class BloomFilter {
    */
   getLocationsForString(str) {
     let a = toCharCodeArray(str);
-    return this.hashFns.map(h => (h(a) % this.bufferBitSize));
+    return this.hashFns.map(h => h(a) % this.bufferBitSize);
   }
 
   /**
@@ -32,20 +32,6 @@ export default class BloomFilter {
    */
   add(str) {
     this.getLocationsForString(str).forEach(this.setBit);
-  }
-
-  /**
-   * Sets the specific bit location
-   */
-  setBit(bitLocation) {
-    this.buffer[bitLocation / 8 | 0] |= 1 << (bitLocation % 8);
-  }
-
-  /**
-   * Returns true if the specified bit location is set
-   */
-  isBitSet(bitLocation) {
-    return !!(this.buffer[bitLocation / 8 | 0] & (1 << (bitLocation % 8)));
   }
 
   /**
