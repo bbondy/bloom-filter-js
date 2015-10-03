@@ -1,6 +1,6 @@
 import {toCharCodeArray, simpleHashFn} from './util.js';
 
-class BloomFilter {
+export default class BloomFilter {
   constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns=[simpleHashFn(101), simpleHashFn(103), simpleHashFn(107)]) {
     // Calculate the needed buffer size in bytes
     this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
