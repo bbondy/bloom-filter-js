@@ -20,10 +20,10 @@ console.log(b.exists('Brian'));
 // Definitely will print false
 console.log(b.exists('Brian Ronald'));
 
-// Serialize and deserialize
+// Serialize to a JSON friendly format
 let json = JSON.stringify(b.toJSON());
 
-// Create an ew BloomerFilter form a previous serialization
+// Create a new BloomerFilter form a previous serialization
 let b2 = BloomFilter.from(JSON.parse(json));
 
 // Will print the same as b.exists
