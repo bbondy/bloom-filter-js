@@ -5,7 +5,9 @@ export default class BloomFilter {
     if (bitsPerElement.constructor === Array) {
       // Re-order params
       let arrayLike = bitsPerElement;
-      hashFns = estimatedNumberOfElements
+      if (estimatedNumberOfElements.constructor === Array) {
+        hashFns = estimatedNumberOfElements
+      }
       // Calculate new buffer size
       this.bufferBitSize = arrayLike.length * 8;
       this.buffer = new Uint8Array(arrayLike);
