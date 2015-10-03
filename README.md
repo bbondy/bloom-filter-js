@@ -29,4 +29,10 @@ let b2 = BloomFilter.from(JSON.parse(json));
 // Will print the same as b.exists
 console.log(b2.exists('Brian'));
 console.log(b2.exists('Brian Ronald'));
+
+// Char code arrays can be passed in directly too
+const toCharCodeArray = (str) => str.split('').map(c => c.charCodeAt(0));
+// Will return the same as without converting it to char codes
+console.log(b2.exists(toCharCodeArray('Brian')));
+console.log(b2.exists(toCharCodeArray('Brian Ronald')));
 ```

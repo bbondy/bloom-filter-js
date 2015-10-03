@@ -16,7 +16,7 @@ export default class BloomFilter {
       // Re-order params
       let arrayLike = bitsPerElement;
       if (estimatedNumberOfElements.constructor === Array) {
-        hashFns = estimatedNumberOfElements
+        hashFns = estimatedNumberOfElements;
       }
       // Calculate new buffer size
       this.bufferBitSize = arrayLike.length * 8;
@@ -46,7 +46,7 @@ export default class BloomFilter {
    * Note that BloomFilter.from only works if the hash functions are the same.
    */
   toJSON() {
-    return Array.from(this.buffer.values())
+    return Array.from(this.buffer.values());
   }
 
   /**
@@ -60,23 +60,31 @@ export default class BloomFilter {
    * Given a string gets all the locations to check/set in the buffer
    * for that string
    */
-  getLocationsForString(str) {
-    let a = toCharCodeArray(str);
-    return this.hashFns.map(h => h(a) % this.bufferBitSize);
+  getLocationsForCharCodes(charCodes) {
+    return this.hashFns.map(h => h(charCodes) % this.bufferBitSize);
   }
 
   /**
    * Adds he specified string to the set
    */
   add(str) {
-    this.getLocationsForString(str).forEach(this.setBit);
+    this.getLocationsForCharCodes(toCharCodeArray(str)).forEach(this.setBit);
   }
 
   /**
+   * Checks whether an element probably exists in the set, or definitely doesn't.
+   * @param str Either a string to check for existance or an array of the string's char codes
+   *   The main reason why you'd want to pass in a char code array is because passing a string
+   *   will use JS directly to get the char codes which is very inneficient compared to calling
+   *   into C++ code to get it and then making the call.
+   *
    * Returns true if the element probably exists in the set
    * Returns false if the element definitely does not exist in the set
    */
-  exists(str) {
-    return this.getLocationsForString(str).every(this.isBitSet);
+  exists(data) {
+    if (data.constructor !== Array) {
+      data = toCharCodeArray(data);
+    }
+    return this.getLocationsForCharCodes(data).every(this.isBitSet);
   }
 }

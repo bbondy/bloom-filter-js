@@ -3,6 +3,7 @@ jest.dontMock('../main')
   .dontMock('crypto');
 
 let crypto = require("crypto");
+let {toCharCodeArray}  = require('../util');
 
 let BloomFilter = require('../main');
 
@@ -67,5 +68,15 @@ describe('BloomFilter', function() {
    expect(b.exists('big')).toBe(false);
    expect(b.exists('world')).toBe(true);
  });
+
+ it('supports charcodes being passed in directly to exists', function() {
+  let b = new BloomFilter();
+  b.add('hello');
+  b.add('world');
+  let b2 = BloomFilter.from(b.toJSON());
+  expect(b.exists(toCharCodeArray('hello'))).toBe(true);
+  expect(b.exists(toCharCodeArray('small'))).toBe(false);
+  expect(b.exists(toCharCodeArray('world'))).toBe(true);
+});
 
 });
