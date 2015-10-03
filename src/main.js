@@ -1,14 +1,40 @@
 import {toCharCodeArray, simpleHashFn, isBitSet, setBit} from './util.js';
 
 export default class BloomFilter {
-  constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns=[simpleHashFn(101), simpleHashFn(103), simpleHashFn(107)]) {
-    // Calculate the needed buffer size in bytes
-    this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
-    this.bufferByteSize = Math.ceil(this.bufferBitSize / 8);
-    this.buffer = new Uint8Array(this.bufferByteSize);
-    this.hashFns = hashFns;
+  constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns) {
+    if (bitsPerElement.constructor === Array) {
+      // Re-order params
+      let arrayLike = bitsPerElement;
+      hashFns = estimatedNumberOfElements
+      // Calculate new buffer size
+      this.bufferBitSize = arrayLike.length * 8;
+      this.buffer = new Uint8Array(arrayLike);
+    } else {
+      // Calculate the needed buffer size in bytes
+      this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
+      this.buffer = new Uint8Array(Math.ceil(this.bufferBitSize / 8));
+    }
+    this.hashFns = hashFns || [simpleHashFn(101), simpleHashFn(103), simpleHashFn(107)];
     this.setBit = setBit.bind(this, this.buffer);
     this.isBitSet = isBitSet.bind(this, this.buffer);
+  }
+
+
+  /**
+   * Construct a Bloom filter from a previous array of data
+   * Note that the hash functions must be the same!
+   */
+  static from(arrayLike, hashFns) {
+    return new BloomFilter(arrayLike, hashFns);
+  }
+
+  /**
+   * Serializing the current BloomFilter into a JSON friendly format.
+   * You would typically pass the result into JSON.stringify.
+   * Note that BloomFilter.from only works if the hash functions are the same.
+   */
+  toJSON() {
+    return Array.from(this.buffer.values())
   }
 
   /**

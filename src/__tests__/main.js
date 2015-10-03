@@ -7,7 +7,7 @@ let crypto = require("crypto");
 let BloomFilter = require('../main');
 
 describe('BloomFilter', function() {
- it('Detects when an elements are in the set and not in the set', function() {
+ it('Detects when elements are in the set and not in the set', function() {
    let b = new BloomFilter();
    b.add('Brian');
    b.add('Ronald');
@@ -57,4 +57,15 @@ describe('BloomFilter', function() {
      expect(b.exists(`test-${i}`)).toBe(true);
    }
  });
+
+ it('functions properly after serlializing and BloomFilter.from', function() {
+   let b = new BloomFilter();
+   b.add('hello');
+   b.add('world');
+   let b2 = BloomFilter.from(b.toJSON());
+   expect(b.exists('hello')).toBe(true);
+   expect(b.exists('big')).toBe(false);
+   expect(b.exists('world')).toBe(true);
+ });
+
 });
