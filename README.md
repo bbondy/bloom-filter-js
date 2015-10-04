@@ -14,10 +14,10 @@ b.add('Brian');
 b.add('Ronald');
 b.add('Bondy');
 
-// Probably will print true
+// Prints true
 console.log(b.exists('Brian'));
 
-// Definitely will print false
+// Prints false
 console.log(b.exists('Brian Ronald'));
 
 // Serialize to a JSON friendly format
@@ -37,7 +37,7 @@ console.log(b2.exists(toCharCodeArray('Brian')));
 console.log(b2.exists(toCharCodeArray('Brian Ronald')));
 
 // And you can check if any substring of a passed string exists
-// Returns true (probably)
+// Returns true
 console.log(b.substringExists('Hello my name is Brian', 5));
 // Returns false
 console.log(b.substringExists('Hello my name is Bri', 3));

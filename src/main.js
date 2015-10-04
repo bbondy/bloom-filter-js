@@ -9,8 +9,9 @@ export default class BloomFilter {
    * @param bitsPerElement Used along with estimatedNumberOfElements to figure out the size of the BloomFilter
    *   By using 10 bits per element you'll have roughly 1% chance of false positives.
    * @param estimatedNumberOfElements Used along with bitsPerElementto figure out the size of the BloomFilter
-   * @param hashFns An array of hash functions to use
-   *
+   * @param hashFns An array of hash functions to use. These can be custom but they should be of the form
+   *   (arrayValues, lastHash, lastCharCode) where the last 2 parameters are optional and are used to make
+   *   a rolling hash to save computation.
    */
   constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns) {
     if (bitsPerElement.constructor === Array) {
@@ -59,10 +60,25 @@ export default class BloomFilter {
 
   /**
    * Given a string gets all the locations to check/set in the buffer
-   * for that string
+   * for that string.
+   * @param charCodes An array of the char codes to use for the hash
    */
   getLocationsForCharCodes(charCodes) {
     return this.hashFns.map(h => h(charCodes) % this.bufferBitSize);
+  }
+
+  /**
+   * Obtains the hashes for the specified charCodes
+   * See "Rabin fingerprint" in https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm for more information.
+   *
+   * @param charCodes An array of the char codes to use for the hash
+   * @param lastHashes If specified, it will pass the last hash to the hashing
+   * function for a faster computation.  Must be called with lastCharCode.
+   * @param lastCharCode if specified, it will pass the last char code
+   *  to the hashing function for a faster computation. Must be called with lastHashes.
+   */
+  getHashesForCharCodes(charCodes, lastHashes, lastCharCode) {
+    return this.hashFns.map((h, i) => h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode));
   }
 
   /**
@@ -106,11 +122,14 @@ export default class BloomFilter {
       data = new Uint8Array(data);
     }
 
+    let lastHashes, lastCharCode;
     for (let i = 0; i < data.length - substringLength + 1; i++) {
-      // TODO: We can optimize here by using a rolling hashing function
-      if (this.getLocationsForCharCodes(data.subarray(i, i + substringLength)).every(this.isBitSet)) {
+
+      let lastHashes = this.getHashesForCharCodes(data.subarray(i, i + substringLength), lastHashes, lastCharCode);
+      if (lastHashes.map(x => x % this.bufferBitSize).every(this.isBitSet)) {
         return true;
       }
+      lastCharCode = data[i];
     }
     return false;
   }

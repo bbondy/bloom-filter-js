@@ -84,7 +84,7 @@ describe('BloomFilter', function() {
    b.add('world');
    expect(b.substringExists('hello', 5)).toBe(true);
    expect(b.substringExists('ell', 3)).toBe(false);
-   expect(b.substringExists(toCharCodeArray('ok hello!!!!'), 5)).toBe(true);
+   expect(b.substringExists(toCharCodeArray('wow ok hello!!!!'), 5)).toBe(true);
    expect(b.substringExists(toCharCodeArray('he!lloworl!d'), 5)).toBe(false);
  });
 

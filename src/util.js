@@ -1,11 +1,14 @@
 export const toCharCodeArray = (str) => str.split('').map(c => c.charCodeAt(0));
 
 /**
- * Pass in a prime for a simple rolling hash function
+ * Returns a function that generates a Rabin fingerprint hash function
+ * @param p The prime to use as a base for the Rabin fingerprint algorithm
  */
-export const simpleHashFn = (p) => (arrayValues) =>
-  arrayValues.reduceRight((total, x, i) => total + x * Math.pow(p, i), 0);
-
+export const simpleHashFn = (p) => (arrayValues, lastHash, lastCharCode) =>
+  (false && lastHash) ?
+    // See the abracadabra example: https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
+    (lastHash - lastCharCode * Math.pow(p, arrayValues.length - 1)) * p + arrayValues[arrayValues.length - 1]:
+    arrayValues.reduce((total, x, i) => total + x * Math.pow(p, i), 0);
 
 /*
  * Sets the specific bit location
