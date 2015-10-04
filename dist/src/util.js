@@ -24,12 +24,15 @@
 
   exports.toCharCodeArray = toCharCodeArray;
   /**
-   * Pass in a prime for a simple rolling hash function
+   * Returns a function that generates a Rabin fingerprint hash function
+   * @param p The prime to use as a base for the Rabin fingerprint algorithm
    */
   var simpleHashFn = function simpleHashFn(p) {
-    return function (arrayValues) {
-      return arrayValues.reduceRight(function (total, x, i) {
-        return total + x * Math.pow(p, i);
+    return function (arrayValues, lastHash, lastCharCode) {
+      return lastHash ?
+      // See the abracadabra example: https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
+      (lastHash - lastCharCode * Math.pow(p, arrayValues.length - 1)) * p + arrayValues[arrayValues.length - 1] : arrayValues.reduce(function (total, x, i) {
+        return total + x * Math.pow(p, arrayValues.length - i - 1);
       }, 0);
     };
   };
