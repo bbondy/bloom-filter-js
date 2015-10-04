@@ -125,7 +125,7 @@ export default class BloomFilter {
     let lastHashes, lastCharCode;
     for (let i = 0; i < data.length - substringLength + 1; i++) {
 
-      let lastHashes = this.getHashesForCharCodes(data.subarray(i, i + substringLength), lastHashes, lastCharCode);
+      lastHashes = this.getHashesForCharCodes(data.subarray(i, i + substringLength), lastHashes, lastCharCode);
       if (lastHashes.map(x => x % this.bufferBitSize).every(this.isBitSet)) {
         return true;
       }

@@ -1,6 +1,6 @@
 {
   "name": "bloom-filter-js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Bloom filter written in JS for JavaScript strings. Tests whether an element belongs to a set. False positive matches are possible, false negatives are not.",
   "main": "dist/main.js",
   "scripts": {
