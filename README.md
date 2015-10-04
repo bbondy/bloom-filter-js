@@ -35,4 +35,10 @@ const toCharCodeArray = (str) => str.split('').map(c => c.charCodeAt(0));
 // Will return the same as without converting it to char codes
 console.log(b2.exists(toCharCodeArray('Brian')));
 console.log(b2.exists(toCharCodeArray('Brian Ronald')));
+
+// And you can check if any substring of a passed string exists
+// Returns true (probably)
+console.log(b.substringExists('Hello my name is Brian', 5));
+// Returns false
+console.log(b.substringExists('Hello my name is Bri', 3));
 ```

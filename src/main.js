@@ -92,4 +92,26 @@ export default class BloomFilter {
     }
     return this.getLocationsForCharCodes(data).every(this.isBitSet);
   }
+
+  /**
+   * Checks if any substring of length substringLenght probably exists or definitely doesn't
+   * If false is returned then no substring of the specified string of the specified lengthis in the bloom filter
+   * @param data The substring or char array to check substrings on.
+   */
+  substringExists(data, substringLength) {
+    if (data.constructor !== Uint8Array) {
+      if (data.constructor !== Array) {
+        data = toCharCodeArray(data);
+      }
+      data = new Uint8Array(data);
+    }
+
+    for (let i = 0; i < data.length - substringLength + 1; i++) {
+      // TODO: We can optimize here by using a rolling hashing function
+      if (this.getLocationsForCharCodes(data.subarray(i, i + substringLength)).every(this.isBitSet)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
