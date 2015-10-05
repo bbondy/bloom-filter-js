@@ -88,4 +88,14 @@ describe('BloomFilter', function() {
    expect(b.substringExists(toCharCodeArray('he!lloworl!d'), 5)).toBe(false);
  });
 
+ it('works with some live examples', function() {
+   let b = new BloomFilter();
+   b.add('googlesy');
+   let url1 = 'http://tpc.googlesyndication.com/safeframe/1-0-2/html/container.html#xpc=sf-gdn-exp-2&p=http%3A//slashdot.org'
+   let url2 = 'https://tpc.googlesyndication.com/pagead/gadgets/suggestion_autolayout_V2/suggestion_autolayout_V2.html#t=15174732506449260991&p=http%3A%2F%2Ftpc.googlesyndication.com';
+   expect(b.substringExists(' googlesy', 8)).toBe(true);
+   expect(b.substringExists(url1, 8)).toBe(true);
+   expect(b.substringExists(url2, 8)).toBe(true);
+ });
+
 });

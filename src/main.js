@@ -28,7 +28,7 @@ export default class BloomFilter {
       this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
       this.buffer = new Uint8Array(Math.ceil(this.bufferBitSize / 8));
     }
-    this.hashFns = hashFns || [simpleHashFn(101), simpleHashFn(103), simpleHashFn(107)];
+    this.hashFns = hashFns || [simpleHashFn(11), simpleHashFn(17), simpleHashFn(23)];
     this.setBit = setBit.bind(this, this.buffer);
     this.isBitSet = isBitSet.bind(this, this.buffer);
   }
@@ -78,7 +78,7 @@ export default class BloomFilter {
    *  to the hashing function for a faster computation. Must be called with lastHashes.
    */
   getHashesForCharCodes(charCodes, lastHashes, lastCharCode) {
-    return this.hashFns.map((h, i) => h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode));
+    return this.hashFns.map((h, i) => h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode, this.bufferBitSize));
   }
 
   /**

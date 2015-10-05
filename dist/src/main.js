@@ -51,7 +51,7 @@
         this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
         this.buffer = new Uint8Array(Math.ceil(this.bufferBitSize / 8));
       }
-      this.hashFns = hashFns || [(0, _utilJs.simpleHashFn)(101), (0, _utilJs.simpleHashFn)(103), (0, _utilJs.simpleHashFn)(107)];
+      this.hashFns = hashFns || [(0, _utilJs.simpleHashFn)(11), (0, _utilJs.simpleHashFn)(17), (0, _utilJs.simpleHashFn)(23)];
       this.setBit = _utilJs.setBit.bind(this, this.buffer);
       this.isBitSet = _utilJs.isBitSet.bind(this, this.buffer);
     }
@@ -105,8 +105,10 @@
        *  to the hashing function for a faster computation. Must be called with lastHashes.
        */
       value: function getHashesForCharCodes(charCodes, lastHashes, lastCharCode) {
+        var _this2 = this;
+
         return this.hashFns.map(function (h, i) {
-          return h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode);
+          return h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode, _this2.bufferBitSize);
         });
       }
     }, {
@@ -150,7 +152,7 @@
        * @param data The substring or char array to check substrings on.
        */
       value: function substringExists(data, substringLength) {
-        var _this2 = this;
+        var _this3 = this;
 
         if (data.constructor !== Uint8Array) {
           if (data.constructor !== Array) {
@@ -165,7 +167,7 @@
 
           lastHashes = this.getHashesForCharCodes(data.subarray(i, i + substringLength), lastHashes, lastCharCode);
           if (lastHashes.map(function (x) {
-            return x % _this2.bufferBitSize;
+            return x % _this3.bufferBitSize;
           }).every(this.isBitSet)) {
             return true;
           }
