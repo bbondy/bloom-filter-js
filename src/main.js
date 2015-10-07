@@ -14,7 +14,15 @@ export default class BloomFilter {
    *   a rolling hash to save computation.
    */
   constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns) {
-    if (bitsPerElement.constructor === Array) {
+    if (bitsPerElement.constructor === Uint8Array) {
+      // Re-order params
+      this.buffer = bitsPerElement;
+      if (estimatedNumberOfElements.constructor === Array) {
+        hashFns = estimatedNumberOfElements;
+      }
+      // Calculate new buffer size
+      this.bufferBitSize = this.buffer.length * 8;
+    } else if (bitsPerElement.constructor === Array) {
       // Re-order params
       let arrayLike = bitsPerElement;
       if (estimatedNumberOfElements.constructor === Array) {
