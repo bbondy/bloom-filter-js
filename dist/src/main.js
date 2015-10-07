@@ -1,21 +1,64 @@
 (function (global, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['exports', 'module', './util.js'], factory);
-  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-    factory(exports, module, require('./util.js'));
+    define(['exports'], factory);
+  } else if (typeof exports !== 'undefined') {
+    factory(exports);
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, mod, global.util);
+    factory(mod.exports);
     global.main = mod.exports;
   }
-})(this, function (exports, module, _utilJs) {
+})(this, function (exports) {
   'use strict';
+
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
 
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  var toCharCodeArray = function toCharCodeArray(str) {
+    return str.split('').map(function (c) {
+      return c.charCodeAt(0);
+    });
+  };
+
+  exports.toCharCodeArray = toCharCodeArray;
+  /**
+   * Returns a function that generates a Rabin fingerprint hash function
+   * @param p The prime to use as a base for the Rabin fingerprint algorithm
+   */
+  var simpleHashFn = function simpleHashFn(p) {
+    return function (arrayValues, lastHash, lastCharCode) {
+      return lastHash ?
+      // See the abracadabra example: https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
+      (lastHash - lastCharCode * Math.pow(p, arrayValues.length - 1)) * p + arrayValues[arrayValues.length - 1] : arrayValues.reduce(function (total, x, i) {
+        return total + x * Math.pow(p, arrayValues.length - i - 1);
+      }, 0);
+    };
+  };
+
+  exports.simpleHashFn = simpleHashFn;
+  /*
+   * Sets the specific bit location
+   */
+  var setBit = function setBit(buffer, bitLocation) {
+    return buffer[bitLocation / 8 | 0] |= 1 << bitLocation % 8;
+  };
+
+  exports.setBit = setBit;
+  /**
+   * Returns true if the specified bit location is set
+   */
+  var isBitSet = function isBitSet(buffer, bitLocation) {
+    return !!(buffer[bitLocation / 8 | 0] & 1 << bitLocation % 8);
+  };
+
+  exports.isBitSet = isBitSet;
 
   var BloomFilter = (function () {
     /**
@@ -37,7 +80,15 @@
 
       _classCallCheck(this, BloomFilter);
 
-      if (bitsPerElement.constructor === Array) {
+      if (bitsPerElement.constructor === Uint8Array) {
+        // Re-order params
+        this.buffer = bitsPerElement;
+        if (estimatedNumberOfElements.constructor === Array) {
+          hashFns = estimatedNumberOfElements;
+        }
+        // Calculate new buffer size
+        this.bufferBitSize = this.buffer.length * 8;
+      } else if (bitsPerElement.constructor === Array) {
         // Re-order params
         var arrayLike = bitsPerElement;
         if (estimatedNumberOfElements.constructor === Array) {
@@ -51,9 +102,9 @@
         this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
         this.buffer = new Uint8Array(Math.ceil(this.bufferBitSize / 8));
       }
-      this.hashFns = hashFns || [(0, _utilJs.simpleHashFn)(11), (0, _utilJs.simpleHashFn)(17), (0, _utilJs.simpleHashFn)(23)];
-      this.setBit = _utilJs.setBit.bind(this, this.buffer);
-      this.isBitSet = _utilJs.isBitSet.bind(this, this.buffer);
+      this.hashFns = hashFns || [simpleHashFn(11), simpleHashFn(17), simpleHashFn(23)];
+      this.setBit = setBit.bind(this, this.buffer);
+      this.isBitSet = isBitSet.bind(this, this.buffer);
     }
 
     _createClass(BloomFilter, [{
@@ -119,7 +170,7 @@
        */
       value: function add(data) {
         if (data.constructor !== Array) {
-          data = (0, _utilJs.toCharCodeArray)(data);
+          data = toCharCodeArray(data);
         }
 
         this.getLocationsForCharCodes(data).forEach(this.setBit);
@@ -139,7 +190,7 @@
        */
       value: function exists(data) {
         if (data.constructor !== Array) {
-          data = (0, _utilJs.toCharCodeArray)(data);
+          data = toCharCodeArray(data);
         }
         return this.getLocationsForCharCodes(data).every(this.isBitSet);
       }
@@ -156,7 +207,7 @@
 
         if (data.constructor !== Uint8Array) {
           if (data.constructor !== Array) {
-            data = (0, _utilJs.toCharCodeArray)(data);
+            data = toCharCodeArray(data);
           }
           data = new Uint8Array(data);
         }
@@ -190,6 +241,6 @@
     return BloomFilter;
   })();
 
-  module.exports = BloomFilter;
+  exports.BloomFilter = BloomFilter;
 });
 //# sourceMappingURL=main.js.map
