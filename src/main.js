@@ -9,7 +9,7 @@ export const simpleHashFn = (p) => (arrayValues, lastHash, lastCharCode) => {
     // See the abracadabra example: https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
     (lastHash - lastCharCode * Math.pow(p, arrayValues.length - 1)) * p + arrayValues[arrayValues.length - 1] :
     arrayValues.reduce((total, x, i) => total + x * Math.pow(p, arrayValues.length - i - 1), 0);
-}
+};
 
 /*
  * Sets the specific bit location
