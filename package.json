@@ -1,13 +1,14 @@
 {
   "name": "bloom-filter-js",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Bloom filter written in JS for JavaScript strings. Tests whether an element belongs to a set. False positive matches are possible, false negatives are not.",
   "main": "dist/src/main.js",
   "scripts": {
     "test": "jest --verbose",
     "build": "babel --modules umd src/*.js --out-dir dist  --source-maps",
     "build-jsm": "babel --modules ignore --plugins babel-jsm-plugin src/*.js --out-dir dist --source-maps",
-    "lint": "eslint src/*.js"
+    "lint": "eslint src/*.js",
+    "prepublish": "npm run build"
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
