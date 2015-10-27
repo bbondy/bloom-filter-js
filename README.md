@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bbondy/bloom-filter-js.svg?branch=master)](https://travis-ci.org/bbondy/bloom-filter-js)
+
 # bloom-filter-js
 
 ## Installation
