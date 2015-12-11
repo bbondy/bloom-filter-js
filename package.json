@@ -7,7 +7,7 @@
     "test": "jest --verbose",
     "build": "babel --modules umd src/*.js --out-dir dist  --source-maps",
     "build-jsm": "babel --modules ignore --plugins babel-jsm-plugin src/*.js --out-dir dist --source-maps",
-    "lint": "eslint src/*.js",
+    "lint": "standard",
     "prepublish": "npm run build"
   },
   "jest": {
@@ -36,6 +36,7 @@
     "babel-jest": "*",
     "babel-jsm-plugin": "^1.0.1",
     "eslint": "^1.6.0",
-    "jest-cli": "*"
+    "jest-cli": "*",
+    "standard": "^5.4.1"
   }
 }

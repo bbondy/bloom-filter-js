@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/bbondy/bloom-filter-js.svg?branch=master)](https://travis-ci.org/bbondy/bloom-filter-js)
+[![Build Status](https://travis-ci.org/bbondy/bloom-filter-js.svg?branch=master)](https://travis-ci.org/bbondy/bloom-filter-js) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
 # bloom-filter-js
 

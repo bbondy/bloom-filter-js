@@ -1,27 +1,27 @@
-export const toCharCodeArray = (str) => str.split('').map(c => c.charCodeAt(0));
+export const toCharCodeArray = (str) => str.split('').map(c => c.charCodeAt(0))
 
 /**
  * Returns a function that generates a Rabin fingerprint hash function
  * @param p The prime to use as a base for the Rabin fingerprint algorithm
  */
 export const simpleHashFn = (p) => (arrayValues, lastHash, lastCharCode) => {
-  return lastHash ?
+  return lastHash
     // See the abracadabra example: https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
-    (lastHash - lastCharCode * Math.pow(p, arrayValues.length - 1)) * p + arrayValues[arrayValues.length - 1] :
-    arrayValues.reduce((total, x, i) => total + x * Math.pow(p, arrayValues.length - i - 1), 0);
-};
+    ? (lastHash - lastCharCode * Math.pow(p, arrayValues.length - 1)) * p + arrayValues[arrayValues.length - 1]
+    : arrayValues.reduce((total, x, i) => total + x * Math.pow(p, arrayValues.length - i - 1), 0)
+}
 
 /*
  * Sets the specific bit location
  */
 export const setBit = (buffer, bitLocation) =>
-  buffer[bitLocation / 8 | 0] |= 1 << bitLocation % 8;
+  buffer[bitLocation / 8 | 0] |= 1 << bitLocation % 8
 
 /**
  * Returns true if the specified bit location is set
  */
 export const isBitSet = (buffer, bitLocation) =>
-  !!(buffer[bitLocation / 8 | 0] & 1 << bitLocation % 8);
+  !!(buffer[bitLocation / 8 | 0] & 1 << bitLocation % 8)
 
 export class BloomFilter {
   /**
@@ -36,41 +36,40 @@ export class BloomFilter {
    *   (arrayValues, lastHash, lastCharCode) where the last 2 parameters are optional and are used to make
    *   a rolling hash to save computation.
    */
-  constructor(bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns) {
+  constructor (bitsPerElement = 10, estimatedNumberOfElements = 50000, hashFns) {
     if (bitsPerElement.constructor === Uint8Array) {
       // Re-order params
-      this.buffer = bitsPerElement;
+      this.buffer = bitsPerElement
       if (estimatedNumberOfElements.constructor === Array) {
-        hashFns = estimatedNumberOfElements;
+        hashFns = estimatedNumberOfElements
       }
       // Calculate new buffer size
-      this.bufferBitSize = this.buffer.length * 8;
+      this.bufferBitSize = this.buffer.length * 8
     } else if (bitsPerElement.constructor === Array) {
       // Re-order params
-      let arrayLike = bitsPerElement;
+      let arrayLike = bitsPerElement
       if (estimatedNumberOfElements.constructor === Array) {
-        hashFns = estimatedNumberOfElements;
+        hashFns = estimatedNumberOfElements
       }
       // Calculate new buffer size
-      this.bufferBitSize = arrayLike.length * 8;
-      this.buffer = new Uint8Array(arrayLike);
+      this.bufferBitSize = arrayLike.length * 8
+      this.buffer = new Uint8Array(arrayLike)
     } else {
       // Calculate the needed buffer size in bytes
-      this.bufferBitSize = bitsPerElement * estimatedNumberOfElements;
-      this.buffer = new Uint8Array(Math.ceil(this.bufferBitSize / 8));
+      this.bufferBitSize = bitsPerElement * estimatedNumberOfElements
+      this.buffer = new Uint8Array(Math.ceil(this.bufferBitSize / 8))
     }
-    this.hashFns = hashFns || [simpleHashFn(11), simpleHashFn(17), simpleHashFn(23)];
-    this.setBit = setBit.bind(this, this.buffer);
-    this.isBitSet = isBitSet.bind(this, this.buffer);
+    this.hashFns = hashFns || [simpleHashFn(11), simpleHashFn(17), simpleHashFn(23)]
+    this.setBit = setBit.bind(this, this.buffer)
+    this.isBitSet = isBitSet.bind(this, this.buffer)
   }
-
 
   /**
    * Construct a Bloom filter from a previous array of data
    * Note that the hash functions must be the same!
    */
-  static from(arrayLike, hashFns) {
-    return new BloomFilter(arrayLike, hashFns);
+  static from (arrayLike, hashFns) {
+    return new BloomFilter(arrayLike, hashFns)
   }
 
   /**
@@ -78,15 +77,15 @@ export class BloomFilter {
    * You would typically pass the result into JSON.stringify.
    * Note that BloomFilter.from only works if the hash functions are the same.
    */
-  toJSON() {
-    return Array.from(this.buffer.values());
+  toJSON () {
+    return Array.from(this.buffer.values())
   }
 
   /**
    * Print the buffer, mostly used for debugging only
    */
-  print() {
-    console.log(this.buffer);
+  print () {
+    console.log(this.buffer)
   }
 
   /**
@@ -94,8 +93,8 @@ export class BloomFilter {
    * for that string.
    * @param charCodes An array of the char codes to use for the hash
    */
-  getLocationsForCharCodes(charCodes) {
-    return this.hashFns.map(h => h(charCodes) % this.bufferBitSize);
+  getLocationsForCharCodes (charCodes) {
+    return this.hashFns.map(h => h(charCodes) % this.bufferBitSize)
   }
 
   /**
@@ -108,19 +107,19 @@ export class BloomFilter {
    * @param lastCharCode if specified, it will pass the last char code
    *  to the hashing function for a faster computation. Must be called with lastHashes.
    */
-  getHashesForCharCodes(charCodes, lastHashes, lastCharCode) {
-    return this.hashFns.map((h, i) => h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode, this.bufferBitSize));
+  getHashesForCharCodes (charCodes, lastHashes, lastCharCode) {
+    return this.hashFns.map((h, i) => h(charCodes, lastHashes ? lastHashes[i] : undefined, lastCharCode, this.bufferBitSize))
   }
 
   /**
    * Adds he specified string to the set
    */
-  add(data) {
+  add (data) {
     if (data.constructor !== Array) {
-      data = toCharCodeArray(data);
+      data = toCharCodeArray(data)
     }
 
-    this.getLocationsForCharCodes(data).forEach(this.setBit);
+    this.getLocationsForCharCodes(data).forEach(this.setBit)
   }
 
   /**
@@ -133,11 +132,11 @@ export class BloomFilter {
    * Returns true if the element probably exists in the set
    * Returns false if the element definitely does not exist in the set
    */
-  exists(data) {
+  exists (data) {
     if (data.constructor !== Array) {
-      data = toCharCodeArray(data);
+      data = toCharCodeArray(data)
     }
-    return this.getLocationsForCharCodes(data).every(this.isBitSet);
+    return this.getLocationsForCharCodes(data).every(this.isBitSet)
   }
 
   /**
@@ -145,23 +144,22 @@ export class BloomFilter {
    * If false is returned then no substring of the specified string of the specified lengthis in the bloom filter
    * @param data The substring or char array to check substrings on.
    */
-  substringExists(data, substringLength) {
+  substringExists (data, substringLength) {
     if (data.constructor !== Uint8Array) {
       if (data.constructor !== Array) {
-        data = toCharCodeArray(data);
+        data = toCharCodeArray(data)
       }
-      data = new Uint8Array(data);
+      data = new Uint8Array(data)
     }
 
-    let lastHashes, lastCharCode;
+    let lastHashes, lastCharCode
     for (let i = 0; i < data.length - substringLength + 1; i++) {
-
-      lastHashes = this.getHashesForCharCodes(data.subarray(i, i + substringLength), lastHashes, lastCharCode);
+      lastHashes = this.getHashesForCharCodes(data.subarray(i, i + substringLength), lastHashes, lastCharCode)
       if (lastHashes.map(x => x % this.bufferBitSize).every(this.isBitSet)) {
-        return true;
+        return true
       }
-      lastCharCode = data[i];
+      lastCharCode = data[i]
     }
-    return false;
+    return false
   }
 }
