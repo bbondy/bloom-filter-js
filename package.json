@@ -17,6 +17,10 @@
     ],
     "moduleFileExtensions": [
       "js"
+    ],
+    "modulePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
     ]
   },
   "repository": {
